@@ -80,7 +80,7 @@ export function useFaceDescriptors() {
 
       return {
         employee: bestMatch,
-        performance: performance || null,
+        performance: performance && performance.kg_lifted !== null ? performance : null,
         confidence: 1 - bestDistance
       };
     }
