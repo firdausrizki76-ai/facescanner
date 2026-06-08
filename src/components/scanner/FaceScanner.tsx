@@ -20,14 +20,14 @@ export default function FaceScanner() {
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [timeStr, setTimeStr] = useState('');
 
-  const [isStarted, setIsStarted] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
 
-  const handleStart = () => {
+  const enableAudio = () => {
     // Prime the speech engine on user interaction to bypass browser autoplay blocks
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
     }
-    setIsStarted(true);
+    setIsAudioEnabled(true);
   };
 
   useEffect(() => {
@@ -75,27 +75,6 @@ export default function FaceScanner() {
     }
   }, [isProcessing, matchResult, matchFace, speak, resetDelay]);
 
-  if (!isStarted) {
-    return (
-      <div className="min-h-screen bg-surface-container-lowest flex flex-col items-center justify-center p-6 text-center z-50 fixed inset-0">
-         <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-            <span className="material-symbols-outlined text-[48px] text-primary" style={{fontVariationSettings: "'FILL' 0"}}>record_voice_over</span>
-         </div>
-         <h1 className="text-headline-lg font-bold text-primary mb-2">Sistem Siap</h1>
-         <p className="text-body-md text-on-surface-variant mb-8 max-w-sm">
-           Browser mewajibkan Anda untuk mengetuk tombol di bawah ini agar fitur Suara Asisten (Voice Guidance) dan Kamera dapat diaktifkan.
-         </p>
-         <button 
-           onClick={handleStart} 
-           className="bg-primary text-on-primary px-8 py-4 rounded-full font-bold text-label-md hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors shadow-lg flex items-center gap-2 animate-[pulse_2s_infinite]"
-         >
-            <span className="material-symbols-outlined text-[24px]">play_arrow</span>
-            MULAI SCANNER
-         </button>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-background text-on-surface font-body-md overflow-hidden min-h-screen">
       {/* TopAppBar */}
@@ -112,7 +91,20 @@ export default function FaceScanner() {
 
       {/* Main Scanner Area */}
       <main className="relative w-full h-screen pt-12 pb-20 bg-black flex flex-col items-center justify-center">
-        <CameraFeed onFaceDetected={handleFaceDetected} isProcessing={isProcessing || !!matchResult} matchResult={matchResult} />
+        <CameraFeed onFaceDetected={handleFaceDetected} isProcessing={isProcessing || !!matchResult || !isAudioEnabled} matchResult={matchResult} />
+
+        {!isAudioEnabled && (
+          <div className="absolute inset-0 z-40 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+            <button 
+              onClick={enableAudio} 
+              className="bg-primary text-on-primary px-8 py-4 rounded-full font-bold text-label-md hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors shadow-lg flex items-center gap-2 animate-[pulse_2s_infinite]"
+            >
+              <span className="material-symbols-outlined text-[24px]">volume_up</span>
+              AKTIFKAN SUARA & SCAN
+            </button>
+            <p className="text-white/70 text-sm mt-4">Ketuk untuk mengaktifkan pemindai dan suara asisten</p>
+          </div>
+        )}
 
         {/* Slide-up Card */}
         {matchResult && (
