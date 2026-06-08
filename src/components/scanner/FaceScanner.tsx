@@ -58,14 +58,19 @@ export default function FaceScanner() {
         } else {
           textToSpeak += `Belum ada catatan panen untuk hari ini. Selamat bekerja!`;
         }
-        speak(textToSpeak);
+        
+        // Wait for BOTH the configured reset delay AND the speech to finish
+        const speechPromise = speak(textToSpeak);
+        const minDelayPromise = new Promise(resolve => {
+          if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+          resetTimeoutRef.current = setTimeout(resolve, resetDelay);
+        });
+
+        await Promise.all([speechPromise, minDelayPromise]);
 
         // Auto reset
-        if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-        resetTimeoutRef.current = setTimeout(() => {
-          setMatchResult(null);
-          setIsProcessing(false);
-        }, resetDelay);
+        setMatchResult(null);
+        setIsProcessing(false);
       } else {
         setTimeout(() => setIsProcessing(false), 2000);
       }
