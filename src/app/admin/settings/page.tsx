@@ -6,6 +6,9 @@ import { createClient } from '@/lib/supabase/client';
 export default function SettingsPage() {
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(true);
+  const [threshold, setThreshold] = useState<number>(0.5);
+  const [resetDelay, setResetDelay] = useState<number>(8000);
+  const [wagePerKg, setWagePerKg] = useState<number>(300);
   const [isSaving, setIsSaving] = useState(false);
   const [settings, setSettings] = useState({
     face_match_threshold: 0.50,
@@ -21,6 +24,10 @@ export default function SettingsPage() {
         .single();
         
       if (data) {
+        if (data.face_match_threshold !== null) setThreshold(data.face_match_threshold);
+        if (data.scanner_reset_delay !== null) setResetDelay(data.scanner_reset_delay);
+        if (data.wage_per_kg !== null) setWagePerKg(data.wage_per_kg);
+        
         setSettings({
           face_match_threshold: data.face_match_threshold,
           scanner_reset_delay: data.scanner_reset_delay
@@ -39,6 +46,7 @@ export default function SettingsPage() {
     const newSettings = {
       face_match_threshold: parseFloat(formData.get('face_match_threshold') as string),
       scanner_reset_delay: parseInt(formData.get('scanner_reset_delay') as string, 10),
+      wage_per_kg: wagePerKg,
       updated_at: new Date().toISOString()
     };
 
@@ -112,6 +120,33 @@ export default function SettingsPage() {
             </div>
           </div>
           
+          <div className="pt-6 border-t border-outline-variant/20">
+            <h3 className="text-title-md font-semibold text-primary mb-4">Pengaturan Upah Karyawan</h3>
+            
+            <div className="space-y-4">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="wage" className="text-label-md text-on-surface uppercase">
+                  Upah per Kg (Rp)
+                </label>
+                <p className="text-body-sm text-on-surface-variant mb-2">
+                  Nilai rupiah yang dikalikan dengan total berat timbangan sawit untuk menghitung upah secara otomatis.
+                </p>
+                <div className="relative max-w-xs">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">Rp</span>
+                  <input 
+                    id="wage" 
+                    type="number" 
+                    step="1"
+                    min="1"
+                    value={wagePerKg}
+                    onChange={(e) => setWagePerKg(Number(e.target.value))}
+                    className="w-full pl-10 pr-4 h-10 bg-surface-container text-on-surface rounded border border-outline-variant/50 focus:border-primary focus:ring-1 focus:ring-primary text-body-md"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="pt-4 border-t border-outline-variant/20 flex justify-end">
             <button 
               type="submit" 
