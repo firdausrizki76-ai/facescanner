@@ -59,7 +59,7 @@ export default function AdminLayout({
                 <span className="material-symbols-outlined">description</span>
                 <span className="text-label-md">Laporan</span>
               </a>
-              <a href="#" className="text-on-surface-variant px-6 py-3 flex items-center gap-4 hover:bg-surface-container-high transition-all rounded-r-full">
+              <a href="/admin/settings" className="text-on-surface-variant px-6 py-3 flex items-center gap-4 hover:bg-surface-container-high transition-all rounded-r-full">
                 <span className="material-symbols-outlined">settings</span>
                 <span className="text-label-md">Settings</span>
               </a>

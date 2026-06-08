@@ -5,11 +5,26 @@ import { createClient } from '@/lib/supabase/client';
 export function useFaceDescriptors() {
   const [isReady, setIsReady] = useState(false);
   const [employees, setEmployees] = useState<any[]>([]);
+  const [threshold, setThreshold] = useState<number>(0.5);
+  const [resetDelay, setResetDelay] = useState<number>(8000);
   const supabase = createClient();
 
-  // Load all face descriptors on mount
+  // Load all face descriptors and settings on mount
   useEffect(() => {
-    async function loadDescriptors() {
+    async function loadData() {
+      // Load Settings
+      const { data: settingsData } = await supabase
+        .from('app_settings')
+        .select('face_match_threshold, scanner_reset_delay')
+        .eq('id', 'global')
+        .single();
+        
+      if (settingsData) {
+        if (settingsData.face_match_threshold) setThreshold(settingsData.face_match_threshold);
+        if (settingsData.scanner_reset_delay) setResetDelay(settingsData.scanner_reset_delay);
+      }
+
+      // Load Employees
       const { data, error } = await supabase
         .from('employees')
         .select('id, name, employee_number, department, position, face_descriptor')
@@ -21,8 +36,8 @@ export function useFaceDescriptors() {
       }
       setIsReady(true);
     }
-    loadDescriptors();
-  }, []);
+    loadData();
+  }, [supabase]);
 
   const matchFace = useCallback(async (descriptor: Float32Array) => {
     if (employees.length === 0) return null;
@@ -43,8 +58,8 @@ export function useFaceDescriptors() {
       }
     }
 
-    // Threshold check (distance < 0.5 means confident match)
-    if (bestDistance > 0.5) {
+    // Threshold check
+    if (bestDistance > threshold) {
       return null;
     }
 
@@ -71,7 +86,7 @@ export function useFaceDescriptors() {
     }
 
     return null;
-  }, [employees, supabase]);
+  }, [employees, threshold, supabase]);
 
-  return { isReady, matchFace };
+  return { isReady, matchFace, resetDelay };
 }

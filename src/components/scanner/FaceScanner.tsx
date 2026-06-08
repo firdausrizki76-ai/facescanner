@@ -15,7 +15,7 @@ export default function FaceScanner() {
     confidence: number;
   } | null>(null);
   
-  const { matchFace } = useFaceDescriptors();
+  const { matchFace, resetDelay } = useFaceDescriptors();
   const { speak } = useVoiceOutput();
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [timeStr, setTimeStr] = useState('');
@@ -38,19 +38,19 @@ export default function FaceScanner() {
     try {
       const result = await matchFace(detection.descriptor);
       
-      if (result && result.confidence > 0.5) { // Threshold
+      if (result) {
         setMatchResult(result);
         
         // Announce using Voice API
         const textToSpeak = `${result.employee.name}. Tanggal ${new Date().toLocaleDateString('id-ID')}. Lokasi panen, ${result.performance.harvest_location}. Anda telah mengangkat ${result.performance.kg_lifted} kilogram sawit, sebanyak ${result.performance.bunches_count} tandan. Total upah estimasi, ${result.performance.wage_amount} rupiah.`;
         speak(textToSpeak);
 
-        // Auto reset after 8 seconds
+        // Auto reset
         if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
         resetTimeoutRef.current = setTimeout(() => {
           setMatchResult(null);
           setIsProcessing(false);
-        }, 8000);
+        }, resetDelay);
       } else {
         setTimeout(() => setIsProcessing(false), 2000);
       }
