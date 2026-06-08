@@ -57,7 +57,7 @@ export default function FaceRegistration({ onDescriptorCaptured }: FaceRegistrat
         </button>
       </div>
 
-      <div className="relative w-full max-w-sm h-[300px] md:h-[400px] bg-black border-2 border-dashed border-outline-variant/50 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative w-full max-w-[320px] h-[60vh] max-h-[450px] min-h-[350px] bg-black border-2 border-dashed border-outline-variant/50 rounded-xl overflow-hidden flex items-center justify-center">
         {!isModelsLoaded ? (
           <div className="flex flex-col items-center text-white gap-2 z-20">
             <span className="material-symbols-outlined animate-spin">refresh</span>
