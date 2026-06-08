@@ -15,6 +15,7 @@ export default function FaceRegistration({ onDescriptorCaptured }: FaceRegistrat
   
   const [status, setStatus] = useState<'idle' | 'scanning' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
 
   const captureFace = useCallback(async () => {
     if (!isModelsLoaded) return;
@@ -45,9 +46,20 @@ export default function FaceRegistration({ onDescriptorCaptured }: FaceRegistrat
 
   return (
     <div className="flex flex-col items-center w-full gap-4">
-      <div className="relative w-full max-w-sm aspect-[3/4] bg-surface-container-lowest border-2 border-dashed border-outline-variant/50 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="flex w-full justify-end px-4">
+        <button 
+          type="button"
+          onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
+          className="bg-surface-container-high text-primary hover:bg-surface-variant px-3 py-1.5 rounded-full flex items-center gap-2 text-label-md transition-colors"
+        >
+          <span className="material-symbols-outlined text-[18px]">flip_camera_android</span>
+          Putar Kamera
+        </button>
+      </div>
+
+      <div className="relative w-full max-w-sm h-[300px] md:h-[400px] bg-black border-2 border-dashed border-outline-variant/50 rounded-xl overflow-hidden flex items-center justify-center">
         {!isModelsLoaded ? (
-          <div className="flex flex-col items-center text-on-surface-variant gap-2">
+          <div className="flex flex-col items-center text-white gap-2 z-20">
             <span className="material-symbols-outlined animate-spin">refresh</span>
             <span className="text-label-md">Memuat AI Model...</span>
           </div>
@@ -57,20 +69,20 @@ export default function FaceRegistration({ onDescriptorCaptured }: FaceRegistrat
               ref={webcamRef}
               audio={false}
               screenshotFormat="image/jpeg"
-              videoConstraints={{ facingMode: 'user' }}
+              videoConstraints={{ facingMode }}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity ${status === 'success' ? 'opacity-50' : 'opacity-100'}`}
             />
             {status === 'scanning' && (
-              <div className="absolute inset-0 border-4 border-primary z-10">
+              <div className="absolute inset-0 border-4 border-primary z-10 pointer-events-none">
                 <div className="w-full h-1 bg-primary shadow-[0_0_15px_rgba(21,66,18,0.8)] animate-[bounce_2s_infinite]"></div>
               </div>
             )}
             {status === 'success' && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/20 backdrop-blur-sm z-20">
-                <div className="bg-primary text-on-primary rounded-full p-3 mb-2">
+                <div className="bg-primary text-on-primary rounded-full p-3 mb-2 shadow-lg">
                   <span className="material-symbols-outlined text-[32px]">check</span>
                 </div>
-                <span className="font-bold text-primary-container drop-shadow-md">Data Wajah Tersimpan</span>
+                <span className="font-bold text-white drop-shadow-md">Data Wajah Tersimpan</span>
               </div>
             )}
           </>
@@ -89,7 +101,7 @@ export default function FaceRegistration({ onDescriptorCaptured }: FaceRegistrat
           type="button"
           onClick={captureFace}
           disabled={!isModelsLoaded || status === 'scanning' || status === 'success'}
-          className="w-full bg-secondary text-on-secondary py-3 rounded text-label-md font-bold hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-secondary text-on-secondary py-3 rounded text-label-md font-bold hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
         >
           <span className="material-symbols-outlined text-[18px]">
             {status === 'success' ? 'done_all' : 'photo_camera'}
@@ -101,7 +113,7 @@ export default function FaceRegistration({ onDescriptorCaptured }: FaceRegistrat
           <button 
             type="button"
             onClick={() => setStatus('idle')}
-            className="w-full mt-2 text-primary text-label-md hover:underline"
+            className="w-full mt-2 text-primary text-label-md hover:underline font-bold"
           >
             Ulangi Pengambilan
           </button>

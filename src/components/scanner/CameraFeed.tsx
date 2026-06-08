@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { useFaceDetection } from '@/hooks/useFaceDetection';
 import * as faceapi from 'face-api.js';
@@ -14,6 +14,7 @@ interface CameraFeedProps {
 export default function CameraFeed({ onFaceDetected, isProcessing, matchResult }: CameraFeedProps) {
   const webcamRef = useRef<Webcam>(null);
   const { isModelsLoaded, detectFace } = useFaceDetection();
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
 
   // Face detection loop
   React.useEffect(() => {
@@ -45,7 +46,7 @@ export default function CameraFeed({ onFaceDetected, isProcessing, matchResult }
         </div>
       )}
 
-      {/* Dimming Overlay (as per design) */}
+      {/* Dimming Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none"></div>
 
       {/* Live Camera Feed */}
@@ -53,17 +54,27 @@ export default function CameraFeed({ onFaceDetected, isProcessing, matchResult }
         ref={webcamRef}
         audio={false}
         screenshotFormat="image/jpeg"
-        videoConstraints={{ facingMode: 'user' }}
+        videoConstraints={{ facingMode }}
         className="absolute inset-0 w-full h-full object-cover opacity-80"
       />
 
+      {/* Camera Controls */}
+      <div className="absolute top-16 right-4 z-50">
+        <button 
+          onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
+          className="bg-surface/20 backdrop-blur-md border border-white/20 p-3 rounded-full text-white hover:bg-surface/40 transition-colors shadow-lg flex items-center justify-center"
+        >
+          <span className="material-symbols-outlined">flip_camera_android</span>
+        </button>
+      </div>
+
       {/* Scanning Frame from Prototype */}
-      <div className="relative z-20 w-[85%] max-w-sm aspect-[3/4] rounded-xl border border-white/20 flex items-center justify-center overflow-hidden">
+      <div className="relative z-20 w-[85%] max-w-[320px] h-[60vh] max-h-[450px] rounded-xl border border-white/20 flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         {/* Frame Corners */}
-        <div className="absolute top-0 left-0 scanner-corner border-t-4 border-l-4 rounded-tl-xl"></div>
-        <div className="absolute top-0 right-0 scanner-corner border-t-4 border-r-4 rounded-tr-xl"></div>
-        <div className="absolute bottom-0 left-0 scanner-corner border-b-4 border-l-4 rounded-bl-xl"></div>
-        <div className="absolute bottom-0 right-0 scanner-corner border-b-4 border-r-4 rounded-br-xl"></div>
+        <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-secondary-container rounded-tl-xl"></div>
+        <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-secondary-container rounded-tr-xl"></div>
+        <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-secondary-container rounded-bl-xl"></div>
+        <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-secondary-container rounded-br-xl"></div>
 
         {/* Dynamic State Overlay */}
         {matchResult ? (
