@@ -42,7 +42,12 @@ export default function FaceScanner() {
         setMatchResult(result);
         
         // Announce using Voice API
-        const textToSpeak = `${result.employee.name}. Tanggal ${new Date().toLocaleDateString('id-ID')}. Lokasi panen, ${result.performance.harvest_location}. Anda telah mengangkat ${result.performance.kg_lifted} kilogram sawit, sebanyak ${result.performance.bunches_count} tandan. Total upah estimasi, ${result.performance.wage_amount} rupiah.`;
+        let textToSpeak = `Halo, ${result.employee.name}. `;
+        if (result.performance) {
+          textToSpeak += `Tanggal ${new Date().toLocaleDateString('id-ID')}. Lokasi panen, ${result.performance.harvest_location}. Anda telah mengangkat ${result.performance.kg_lifted} kilogram sawit, sebanyak ${result.performance.bunches_count} tandan. Total upah estimasi, ${result.performance.wage_amount} rupiah.`;
+        } else {
+          textToSpeak += `Belum ada catatan panen untuk hari ini. Selamat bekerja!`;
+        }
         speak(textToSpeak);
 
         // Auto reset
