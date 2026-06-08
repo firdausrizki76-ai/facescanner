@@ -47,16 +47,16 @@ export default function EmployeeCard({ employee, performance, confidence, onConf
       {performance ? (
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-surface-container-low p-2 rounded-lg border border-outline-variant/10">
-            <p className="text-[10px] text-on-surface-variant font-label-md mb-1 uppercase">Weight</p>
-            <p className="text-headline-md text-primary">{performance.kg_lifted.toLocaleString('id-ID')} <span className="text-xs">Kg</span></p>
+            <p className="text-[10px] text-on-surface-variant font-label-md mb-1 uppercase">Berat</p>
+            <p className="text-headline-md text-primary">{Number(performance.kg_lifted).toLocaleString('id-ID')} <span className="text-xs">Kg</span></p>
           </div>
           <div className="bg-surface-container-low p-2 rounded-lg border border-outline-variant/10">
-            <p className="text-[10px] text-on-surface-variant font-label-md mb-1 uppercase">Bunches</p>
+            <p className="text-[10px] text-on-surface-variant font-label-md mb-1 uppercase">Tandan</p>
             <p className="text-headline-md text-secondary">{performance.bunches_count}</p>
           </div>
           <div className="bg-surface-container-low p-2 rounded-lg border border-outline-variant/10">
-            <p className="text-[10px] text-on-surface-variant font-label-md mb-1 uppercase">Wage (Est)</p>
-            <p className="text-headline-md text-primary-container">{(performance.wage_amount / 1000).toLocaleString('id-ID')} <span className="text-xs">k</span></p>
+            <p className="text-[10px] text-on-surface-variant font-label-md mb-1 uppercase">Upah (Rp)</p>
+            <p className="text-headline-md text-primary-container">{Number(performance.wage_amount).toLocaleString('id-ID')}</p>
           </div>
         </div>
       ) : (

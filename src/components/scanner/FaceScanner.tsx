@@ -54,7 +54,7 @@ export default function FaceScanner() {
         // Announce using Voice API
         let textToSpeak = `Halo, ${result.employee.name}. `;
         if (result.performance) {
-          textToSpeak += `Tanggal ${new Date().toLocaleDateString('id-ID')}. Lokasi panen, ${result.performance.harvest_location}. Anda telah mengangkat ${result.performance.kg_lifted} kilogram sawit, sebanyak ${result.performance.bunches_count} tandan. Total upah estimasi, ${result.performance.wage_amount} rupiah.`;
+          textToSpeak += `Tanggal ${new Date().toLocaleDateString('id-ID')}. Lokasi panen, ${result.performance.harvest_location}. Anda telah mengangkat ${Number(result.performance.kg_lifted)} kilogram sawit, sebanyak ${result.performance.bunches_count} tandan. Total upah estimasi, ${Number(result.performance.wage_amount)} rupiah.`;
         } else {
           textToSpeak += `Belum ada catatan panen untuk hari ini. Selamat bekerja!`;
         }
@@ -78,14 +78,13 @@ export default function FaceScanner() {
   return (
     <div className="bg-background text-on-surface font-body-md overflow-hidden min-h-screen">
       {/* TopAppBar */}
-      <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/10 flex justify-between items-center w-full px-margin-mobile h-12 z-50 fixed top-0 left-0">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary dark:text-primary-fixed-dim" style={{fontVariationSettings: "'FILL' 0"}}>agriculture</span>
-          <h1 className="text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Sawit Face Scanner</h1>
+      <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/10 flex justify-between items-center w-full px-4 h-14 z-50 fixed top-0 left-0">
+        <div className="flex items-center gap-2 overflow-hidden">
+          <span className="material-symbols-outlined text-primary dark:text-primary-fixed-dim shrink-0" style={{fontVariationSettings: "'FILL' 0"}}>agriculture</span>
+          <h1 className="text-[18px] font-bold text-primary dark:text-primary-fixed-dim truncate">Sawit Face Scanner</h1>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 shrink-0">
           <span className="text-label-md text-on-surface-variant">{timeStr}</span>
-          <span className="material-symbols-outlined text-on-surface-variant">signal_cellular_4_bar</span>
         </div>
       </header>
 
